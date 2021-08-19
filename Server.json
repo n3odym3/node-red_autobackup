@@ -1,0 +1,204 @@
+[
+    {
+        "id": "518f7aad.f1cc34",
+        "type": "group",
+        "z": "8de3e84cffca193e",
+        "name": "Backup (Server)",
+        "style": {
+            "stroke": "#000000",
+            "fill": "#ff7f7f",
+            "fill-opacity": "0.4",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "79072b22.cb0f54",
+            "51c37378.ccf39c",
+            "955853e5.afe88",
+            "d3cd8845.d62d98",
+            "44062e46.5dc1e",
+            "717cc23a.69392c",
+            "302e85ed.096b4a"
+        ],
+        "x": 84,
+        "y": 49,
+        "w": 702,
+        "h": 142
+    },
+    {
+        "id": "79072b22.cb0f54",
+        "type": "mqtt in",
+        "z": "8de3e84cffca193e",
+        "g": "518f7aad.f1cc34",
+        "name": "Backup Response",
+        "topic": "backup/resp/#",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "f0f95ba1.2e5f08",
+        "nl": false,
+        "rap": false,
+        "x": 200,
+        "y": 150,
+        "wires": [
+            [
+                "717cc23a.69392c"
+            ]
+        ]
+    },
+    {
+        "id": "51c37378.ccf39c",
+        "type": "file",
+        "z": "8de3e84cffca193e",
+        "g": "518f7aad.f1cc34",
+        "name": "",
+        "filename": "",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 710,
+        "y": 150,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "955853e5.afe88",
+        "type": "function",
+        "z": "8de3e84cffca193e",
+        "g": "518f7aad.f1cc34",
+        "name": "Format json file",
+        "func": "const name = msg.topic.split(\"/\").pop();\n\nmsg.filename = \"/Backup/NodeRED/\" + flow.get(\"date\") + \"/\" + name + \".json\"\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 150,
+        "wires": [
+            [
+                "51c37378.ccf39c"
+            ]
+        ]
+    },
+    {
+        "id": "d3cd8845.d62d98",
+        "type": "inject",
+        "z": "8de3e84cffca193e",
+        "g": "518f7aad.f1cc34",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "00 03 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 90,
+        "wires": [
+            [
+                "44062e46.5dc1e"
+            ]
+        ]
+    },
+    {
+        "id": "44062e46.5dc1e",
+        "type": "function",
+        "z": "8de3e84cffca193e",
+        "g": "518f7aad.f1cc34",
+        "name": "Set Date",
+        "func": "const date = new Date();\nconst year = date.getFullYear();\nconst month = (\"0\" + (date.getMonth() + 1)).slice(-2);\nconst day = (\"0\" + date.getDate()).slice(-2);\n\nmsg.payload = year.toString() + month.toString() + day.toString();\nflow.set(\"date\", msg.payload);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 90,
+        "wires": [
+            [
+                "302e85ed.096b4a"
+            ]
+        ]
+    },
+    {
+        "id": "717cc23a.69392c",
+        "type": "delay",
+        "z": "8de3e84cffca193e",
+        "g": "518f7aad.f1cc34",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "x": 380,
+        "y": 150,
+        "wires": [
+            [
+                "955853e5.afe88"
+            ]
+        ]
+    },
+    {
+        "id": "302e85ed.096b4a",
+        "type": "mqtt out",
+        "z": "8de3e84cffca193e",
+        "g": "518f7aad.f1cc34",
+        "name": "Gat Backup",
+        "topic": "backup/get",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f0f95ba1.2e5f08",
+        "x": 540,
+        "y": 90,
+        "wires": []
+    },
+    {
+        "id": "f0f95ba1.2e5f08",
+        "type": "mqtt-broker",
+        "name": "MQTT Broker",
+        "broker": "BROKER.IP",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "protocolVersion": "3",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    }
+]

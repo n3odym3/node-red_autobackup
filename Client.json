@@ -1,0 +1,343 @@
+[
+    {
+        "id": "110b963e.64fcea",
+        "type": "group",
+        "z": "8de3e84cffca193e",
+        "name": "Backup (Client)",
+        "style": {
+            "stroke": "#000000",
+            "fill": "#ffdf7f",
+            "fill-opacity": "0.51",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "ee90c1cd.d5ed4",
+            "c7f0c298.8c29",
+            "22689f94.56e73",
+            "230f9371.46f58c",
+            "9c824daa.ddb2",
+            "6bd7ecd5.f5e924",
+            "5deb6dbd.e318f4",
+            "1f63bb24.655095",
+            "8c6b9086.c91eb",
+            "76fe5e7.7fda6a"
+        ],
+        "x": 84,
+        "y": 209,
+        "w": 992,
+        "h": 132
+    },
+    {
+        "id": "ee90c1cd.d5ed4",
+        "type": "change",
+        "z": "8de3e84cffca193e",
+        "g": "110b963e.64fcea",
+        "name": "POST /auth/token",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "payload",
+                "pt": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload.client_id",
+                "pt": "msg",
+                "to": "node-red-editor",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.grant_type",
+                "pt": "msg",
+                "to": "password",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.scope",
+                "pt": "msg",
+                "to": "*",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.username",
+                "pt": "msg",
+                "to": "USERNAME",
+                "tot": "str"
+            },
+            {
+                "t": "set",
+                "p": "payload.password",
+                "pt": "msg",
+                "to": "PASSWORD",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 370,
+        "y": 250,
+        "wires": [
+            [
+                "c7f0c298.8c29"
+            ]
+        ]
+    },
+    {
+        "id": "c7f0c298.8c29",
+        "type": "http request",
+        "z": "8de3e84cffca193e",
+        "g": "110b963e.64fcea",
+        "name": "POST /auth/token",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://localhost:1880/auth/token",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 580,
+        "y": 250,
+        "wires": [
+            [
+                "22689f94.56e73"
+            ]
+        ]
+    },
+    {
+        "id": "22689f94.56e73",
+        "type": "function",
+        "z": "8de3e84cffca193e",
+        "g": "110b963e.64fcea",
+        "name": "Bearer",
+        "func": "msg.payload.access_token = \"Bearer \" + msg.payload.access_token\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 750,
+        "y": 250,
+        "wires": [
+            [
+                "230f9371.46f58c"
+            ]
+        ]
+    },
+    {
+        "id": "230f9371.46f58c",
+        "type": "change",
+        "z": "8de3e84cffca193e",
+        "g": "110b963e.64fcea",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "NodeRED_Token",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 940,
+        "y": 250,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9c824daa.ddb2",
+        "type": "change",
+        "z": "8de3e84cffca193e",
+        "g": "110b963e.64fcea",
+        "name": "GET /flows",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "headers",
+                "pt": "msg"
+            },
+            {
+                "t": "set",
+                "p": "headers.Authorization",
+                "pt": "msg",
+                "to": "NodeRED_Token.access_token",
+                "tot": "flow"
+            },
+            {
+                "t": "set",
+                "p": "headers.Node-RED-API-Version",
+                "pt": "msg",
+                "to": "v1",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 560,
+        "y": 300,
+        "wires": [
+            [
+                "6bd7ecd5.f5e924"
+            ]
+        ]
+    },
+    {
+        "id": "6bd7ecd5.f5e924",
+        "type": "http request",
+        "z": "8de3e84cffca193e",
+        "g": "110b963e.64fcea",
+        "name": "GET /flows",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://localhost:1880/flows",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 730,
+        "y": 300,
+        "wires": [
+            [
+                "8c6b9086.c91eb"
+            ]
+        ]
+    },
+    {
+        "id": "5deb6dbd.e318f4",
+        "type": "inject",
+        "z": "8de3e84cffca193e",
+        "g": "110b963e.64fcea",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 190,
+        "y": 300,
+        "wires": [
+            [
+                "9c824daa.ddb2",
+                "ee90c1cd.d5ed4"
+            ]
+        ]
+    },
+    {
+        "id": "1f63bb24.655095",
+        "type": "mqtt in",
+        "z": "8de3e84cffca193e",
+        "g": "110b963e.64fcea",
+        "name": "Inter NR Get",
+        "topic": "backup/get",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "f0f95ba1.2e5f08",
+        "nl": false,
+        "rap": false,
+        "x": 190,
+        "y": 250,
+        "wires": [
+            [
+                "ee90c1cd.d5ed4",
+                "76fe5e7.7fda6a"
+            ]
+        ]
+    },
+    {
+        "id": "8c6b9086.c91eb",
+        "type": "mqtt out",
+        "z": "8de3e84cffca193e",
+        "g": "110b963e.64fcea",
+        "name": "Inter NR Resp",
+        "topic": "backup/resp/twitch_bot",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f0f95ba1.2e5f08",
+        "x": 910,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "76fe5e7.7fda6a",
+        "type": "delay",
+        "z": "8de3e84cffca193e",
+        "g": "110b963e.64fcea",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "x": 340,
+        "y": 300,
+        "wires": [
+            [
+                "9c824daa.ddb2"
+            ]
+        ]
+    },
+    {
+        "id": "f0f95ba1.2e5f08",
+        "type": "mqtt-broker",
+        "name": "MQTT Broker",
+        "broker": "BROKER.IP",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": false,
+        "protocolVersion": "3",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    }
+]
